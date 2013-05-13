@@ -17,7 +17,9 @@ puts ec2ssh_update_command
 puts ec2ssh_update_result
 puts
 
-servers = ec2ssh_update_result.scan(/^Host\s(#{servers_name_pattern})/).flatten.join(' ')
+servers = ec2ssh_update_result.scan(/^Host\s(#{servers_name_pattern})/).map{|matches| matches.first }.join(' ')
+puts servers
+exit
 puts servers_name_pattern
 puts servers
 puts

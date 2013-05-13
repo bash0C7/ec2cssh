@@ -26,7 +26,7 @@ Or install it yourself as:
 ### simple
 
 ````sh
-$ bin/ec2csshx '\S+-production' 
+$ ec2csshx '\S+-production' 
 ````
 
 ### Parameters

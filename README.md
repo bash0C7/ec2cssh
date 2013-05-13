@@ -31,7 +31,7 @@ $ ec2csshx '\S+-production'
 
 ### Parameters
 
-1. Server name pattern (required)
+#### 1. Server name pattern (required)
 
 ex) 
 
@@ -54,19 +54,19 @@ Host db-server-1.ap-southeast-1
 
 Server name pattern: 'app-server.*' => connect to app-server-1.us-west-1 and app-server-2.us-west-1
 
-2. ec2ssh_update_command (optional) default 'ec2ssh update'
+#### 2. ec2ssh_update_command (optional) default 'ec2ssh update'
 
 'ec2ssh' & Parameters 
 
 ex) 'ec2ssh update --aws-key my_key1'
 
-3. cssh_command (optional) default 'csshx'
+#### 3. cssh_command (optional) default 'csshx'
 
 'cssh' & Parameters
 
 ex) 'csshx --config /path/to/configfile'
 
-4. port (optional)
+#### 4. port (optional)
 
 SSH Port No
 

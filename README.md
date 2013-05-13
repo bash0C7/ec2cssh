@@ -16,12 +16,12 @@ Or install it yourself as:
 
     $ gem install ec2csshx
 
-## Usage
-
-### Prepair
+## Prepair
 
 - install ec2ssh & run ec2ssh init
 - install csshx
+
+## Usage
 
 ### simple
 

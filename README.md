@@ -1,12 +1,12 @@
-# ec2csshx
+# ec2cssh
 
-Cluster SSH connect to pattern mached hosts (Connected by csshx) (Hosts in ssh config written by ec2ssh)
+Cluster SSH connect to pattern mached hosts (Connected by cssh) (Hosts in ssh config written by ec2ssh)
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'ec2csshx'
+    gem 'ec2cssh'
 
 And then execute:
 
@@ -14,19 +14,19 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install ec2csshx
+    $ gem install ec2cssh
 
 ## Prepair
 
 - install ec2ssh & run ec2ssh init
-- install csshx
+- install cssh
 
 ## Usage
 
 ### simple
 
 ````sh
-$ ec2csshx '\S+-production' 
+$ ec2cssh '\S+-production' 
 ````
 
 ### Parameters
@@ -60,11 +60,11 @@ Server name pattern: 'app-server.*' => connect to app-server-1.us-west-1 and app
 
 ex) 'ec2ssh update --aws-key my_key1'
 
-#### 3. cssh_command (optional) default 'csshx'
+#### 3. cssh_command (optional) default 'cssh'
 
 'cssh' & Parameters
 
-ex) 'csshx --config /path/to/configfile'
+ex) 'cssh --config /path/to/configfile'
 
 #### 4. port (optional)
 

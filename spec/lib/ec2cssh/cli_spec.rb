@@ -24,42 +24,85 @@ Host hoge.fuga.com
   end
   let(:ec2ssh_update_command) { "cat #{ssh_config_path}" }
   let(:cssh_command) { 'echo' }
+  let(:servers_name_pattern) { '.*\.com$' }
+  let(:port) { 80 }
 
-  describe '#connect' do
-    let(:servers_name_pattern) { '.*\.com$' }
-
-    context 'servers_name_pattern match' do
-      subject do
-        silence(:stdout) do
-          cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command}]
-        end
-      end
-
-      it { should eq("echo foo.bar.com hoge.fuga.com\n")}
-
-      context 'with port option' do
-        let(:port) { 80 }
-      
+  describe 'tasks' do
+    describe '#connect' do
+      context 'servers_name_pattern match' do
         subject do
           silence(:stdout) do
-            cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command} --port #{port}]
+            cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command}]
           end
         end
 
-        it { should eq("echo foo.bar.com:#{port} hoge.fuga.com:#{port}\n")}
-      end
-    end
+        it { should eq("echo foo.bar.com hoge.fuga.com\n")}
 
-    context 'servers_name_pattern unmatch' do
-      let(:servers_name_pattern) { 'UNMATCH' }
+        context 'with port option' do
+      
+          subject do
+            silence(:stdout) do
+              cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command} --port #{port}]
+            end
+          end
 
-      subject do
-        silence(:stdout) do
-          cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command}]
+          it { should eq("echo foo.bar.com:#{port} hoge.fuga.com:#{port}\n")}
         end
       end
 
-      it { should eq("servers_name_pattern unmatch\n")}
+      context 'servers_name_pattern unmatch' do
+        let(:servers_name_pattern) { 'UNMATCH' }
+
+        subject do
+          silence(:stdout) do
+            cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command}]
+          end
+        end
+
+        it { should eq("servers_name_pattern unmatch\n")}
+      end
+
+    end
+  end
+  describe 'no_tasks' do
+    describe '#update!' do
+      subject do
+        cli.new.update! ec2ssh_update_command
+      end
+
+      it { should eq(`cat #{ssh_config_path}`)}
+
+    end
+    
+    describe '#list' do
+      subject do
+        instance = cli.new
+        instance.update! ec2ssh_update_command
+        instance.list
+      end
+
+      it { should eq(%W[foo.bar.com foo.bar.jp hoge.fuga.com])}
+    
+      context 'default parameter' do
+        subject do
+          instance = cli.new
+          instance.update! ec2ssh_update_command
+          instance.list servers_name_pattern
+        end
+
+        it { should eq(%W[foo.bar.com hoge.fuga.com])}
+      end
+    end
+
+    describe '#csshx' do
+      subject do
+        instance = cli.new
+        instance.update! ec2ssh_update_command
+        instance.list
+        instance.cssh cssh_command, port
+      end
+
+      it { should eq('echo foo.bar.com foo.bar.jp hoge.fuga.com')}
     end
 
   end

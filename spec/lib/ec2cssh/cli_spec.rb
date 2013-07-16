@@ -70,24 +70,23 @@ Host hoge.fuga.com
         cli.new.update! ec2ssh_update_command
       end
 
-      it { should eq(`cat #{ssh_config_path}`)}
-
+      it { should eq(%W[foo.bar.com foo.bar.jp hoge.fuga.com])}
     end
     
-    describe '#list' do
+    describe '#select' do
       subject do
         instance = cli.new
         instance.update! ec2ssh_update_command
-        instance.list
+        instance.select
       end
 
       it { should eq(%W[foo.bar.com foo.bar.jp hoge.fuga.com])}
     
-      context 'default parameter' do
+      context '*.com only' do
         subject do
           instance = cli.new
           instance.update! ec2ssh_update_command
-          instance.list servers_name_pattern
+          instance.select /#{servers_name_pattern}/
         end
 
         it { should eq(%W[foo.bar.com hoge.fuga.com])}
@@ -98,7 +97,7 @@ Host hoge.fuga.com
       subject do
         instance = cli.new
         instance.update! ec2ssh_update_command
-        instance.list
+        instance.select
         instance.cssh cssh_command, port
       end
 

@@ -6,6 +6,13 @@ module Ec2cssh
     class_option :ec2ssh_update, :banner => 'ec2ssh_update_command', :default => 'ec2ssh update'
     class_option :cssh, :banner => 'cssh_command', :default => 'cssh'
     class_option :port, :banner => 'ssh port', :default => nil
+    class_option :ssh_config_path, :banner => 'ssh_config_path', :default => '~/.ssh/config'
+
+    def initialize(*args)
+      super
+      @hosts = []
+      @selected_hosts = []
+    end
 
     desc "connect", "run `ec2ssh` and connect servers by cssh"
     def connect servers_name_pattern
@@ -17,16 +24,21 @@ module Ec2cssh
     
     desc 'console', 'console'
     def console
-      say 'update!(u), select(s), cssh(c)'
+      say 'update!(u), read ssh_config(r), select(s), cssh(c)'
       binding.pry
     end
     
     no_tasks do
       def update! update_command = options.ec2ssh_update
-        update_result = `#{update_command}`
-        @hosts = update_result.scan(/^Host\s+(\S+)/).flatten
+        `#{update_command}`
+        read
       end
       alias_method :u, :update!
+
+      def read ssh_config_path = options.ssh_config_path
+        @hosts = File.open(ssh_config_path).read.scan(/^Host\s+(\S+)/).flatten
+      end
+      alias_method :r, :read
 
       def select pattern = /.*/
         @selected_hosts = @hosts.select { |host| pattern =~ host }

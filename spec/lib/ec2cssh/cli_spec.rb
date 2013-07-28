@@ -32,7 +32,7 @@ Host hoge.fuga.com
       context 'servers_name_pattern match' do
         subject do
           silence(:stdout) do
-            cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command}]
+            cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command} --ssh_config_path #{ssh_config_path}]
           end
         end
 
@@ -42,7 +42,7 @@ Host hoge.fuga.com
       
           subject do
             silence(:stdout) do
-              cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command} --port #{port}]
+              cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command} --port #{port} --ssh_config_path #{ssh_config_path}]
             end
           end
 
@@ -55,7 +55,7 @@ Host hoge.fuga.com
 
         subject do
           silence(:stdout) do
-            cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command}]
+            cli.start %W[connect #{servers_name_pattern} --ec2ssh_update #{ec2ssh_update_command} --cssh #{cssh_command} --ssh_config_path #{ssh_config_path}]
           end
         end
 
@@ -65,9 +65,18 @@ Host hoge.fuga.com
     end
   end
   describe 'no_tasks' do
+    let(:instance) do
+      options = {}
+      options[:ec2ssh_update] = ec2ssh_update_command
+      options[:cssh] = cssh_command
+      options[:ssh_config_path] = ssh_config_path
+
+      cli.new([] ,options )
+    end
+
     describe '#update!' do
       subject do
-        cli.new.update! ec2ssh_update_command
+        instance.update!
       end
 
       it { should eq(%W[foo.bar.com foo.bar.jp hoge.fuga.com])}
@@ -75,7 +84,6 @@ Host hoge.fuga.com
     
     describe '#select' do
       subject do
-        instance = cli.new
         instance.update! ec2ssh_update_command
         instance.select
       end
@@ -84,7 +92,6 @@ Host hoge.fuga.com
     
       context '*.com only' do
         subject do
-          instance = cli.new
           instance.update! ec2ssh_update_command
           instance.select /#{servers_name_pattern}/
         end
@@ -95,7 +102,6 @@ Host hoge.fuga.com
 
     describe '#csshx' do
       subject do
-        instance = cli.new
         instance.update! ec2ssh_update_command
         instance.select
         instance.cssh cssh_command, port
